@@ -13,7 +13,7 @@ from datetime import datetime, timedelta
 from pathlib import Path
 from typing import List, Optional
 
-from config import get_settings
+from config.settings import get_settings
 from models.market_data import MarketData
 from models.signals import TradingSignal
 from services.alerts.alert_manager import AlertManager

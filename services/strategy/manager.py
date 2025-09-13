@@ -7,15 +7,14 @@ from .technical import (
     MovingAverageCrossoverStrategy,
     BollingerBandStrategy
 )
-from ..config import settings
-from ..utils.logger import logger
+from config.settings import get_settings
 
 
 class StrategyManager:
     """Manages and coordinates multiple trading strategies."""
     
     def __init__(self):
-        self.logger = logger
+        self.settings = get_settings()
         self.strategies = self._initialize_strategies()
     
     def _initialize_strategies(self) -> Dict[str, Any]:

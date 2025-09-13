@@ -1,9 +1,9 @@
 """Base strategy class for quantitative trading strategies."""
 
 from abc import ABC, abstractmethod
+import logging
 import pandas as pd
 from typing import Dict, Any, Optional, Tuple
-from ..utils.logger import logger
 
 
 class BaseStrategy(ABC):
@@ -12,7 +12,7 @@ class BaseStrategy(ABC):
     def __init__(self, name: str, **kwargs):
         self.name = name
         self.params = kwargs
-        self.logger = logger
+        self.logger = logging.getLogger(f"{__name__}.{name}")
     
     @abstractmethod
     def calculate_indicators(self, data: pd.DataFrame) -> pd.DataFrame:

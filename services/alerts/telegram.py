@@ -4,23 +4,24 @@ import asyncio
 from typing import List, Dict, Any, Optional
 from telegram import Bot
 from telegram.constants import ParseMode
-from ..config import settings
-from ..utils.logger import logger
+from config.settings import get_settings
 
 
 class TelegramAlertsBot:
     """Handles sending alerts via Telegram."""
     
     def __init__(self):
-        self.bot_token = settings.telegram_bot_token
-        self.chat_id = settings.telegram_chat_id
-        self.logger = logger
+        self.settings = get_settings()
+        self.bot_token = self.settings.telegram_bot_token
+        self.chat_id = self.settings.telegram_chat_id
         self.bot = None
         
         if self.bot_token and self.bot_token != "your_bot_token_here":
             self.bot = Bot(token=self.bot_token)
-        else:
-            self.logger.warning("Telegram bot token not configured")
+
+
+# Alias for backward compatibility
+TelegramNotifier = TelegramAlertsBot
     
     async def send_message(self, message: str, parse_mode: str = ParseMode.MARKDOWN) -> bool:
         """

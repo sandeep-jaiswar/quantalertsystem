@@ -21,7 +21,16 @@ pydantic-settings>=2.0.0
 schedule>=1.2.0
 requests>=2.31.0
 
+# System Monitoring
+psutil>=5.9.0
+
 # Development and Testing
 pytest>=7.0.0
 black>=23.0.0
 flake8>=6.0.0
+
+# Additional Quality Tools
+ruff>=0.1.0
+mypy>=1.0.0
+bandit>=1.7.0
+safety>=2.0.0
