@@ -1,8 +1,6 @@
 """Technical analysis strategies."""
 
 import pandas as pd
-import numpy as np
-from typing import Dict, Any, Optional
 from .base import BaseStrategy
 
 
@@ -161,7 +159,9 @@ class BollingerBandStrategy(BaseStrategy):
         data['bb_width'] = (data['bb_upper'] - data['bb_lower']) / data['bb_middle']
         
         # %B indicator
-        data['percent_b'] = (data['close'] - data['bb_lower']) / (data['bb_upper'] - data['bb_lower'])
+        data['percent_b'] = (data['close'] - data['bb_lower']) / (
+            data['bb_upper'] - data['bb_lower']
+        )
         
         # RSI for confirmation
         data['rsi'] = self._calculate_rsi(data['close'], 14)

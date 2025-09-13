@@ -18,10 +18,8 @@ class TelegramAlertsBot:
         
         if self.bot_token and self.bot_token != "your_bot_token_here":
             self.bot = Bot(token=self.bot_token)
-
-
-# Alias for backward compatibility
-TelegramNotifier = TelegramAlertsBot
+        else:
+            self.logger.warning("Telegram bot token not configured")
     
     async def send_message(self, message: str, parse_mode: str = ParseMode.MARKDOWN) -> bool:
         """
@@ -249,3 +247,7 @@ def send_alert_sync(message: str) -> bool:
     except Exception as e:
         logger.error(f"Error sending sync alert: {str(e)}")
         return False
+
+
+# Alias for backward compatibility
+TelegramNotifier = TelegramAlertsBot

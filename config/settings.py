@@ -5,10 +5,9 @@ Type-safe configuration management with Pydantic validation
 following manifesto principles for strict configuration discipline.
 """
 
-import os
 from functools import lru_cache
 from pathlib import Path
-from typing import List, Optional
+from typing import List
 
 from pydantic import Field, field_validator
 from pydantic_settings import BaseSettings
@@ -38,7 +37,9 @@ class Settings(BaseSettings):
     # === Analysis Configuration ===
     default_symbols: str = Field("AAPL,GOOGL,MSFT,TSLA,NVDA", env="DEFAULT_SYMBOLS")
     lookback_days: int = Field(60, env="LOOKBACK_DAYS", ge=10, le=365)
-    min_confidence_threshold: float = Field(0.6, env="MIN_CONFIDENCE_THRESHOLD", ge=0.0, le=1.0)
+    min_confidence_threshold: float = Field(
+        0.6, env="MIN_CONFIDENCE_THRESHOLD", ge=0.0, le=1.0
+    )
     max_symbols_per_run: int = Field(50, env="MAX_SYMBOLS_PER_RUN", ge=1, le=100)
     
     # === Strategy Parameters ===
@@ -50,7 +51,9 @@ class Settings(BaseSettings):
     # RSI Parameters
     rsi_period: int = Field(14, env="RSI_PERIOD", ge=2, le=50)
     rsi_oversold: float = Field(30.0, env="RSI_OVERSOLD_THRESHOLD", ge=10.0, le=40.0)
-    rsi_overbought: float = Field(70.0, env="RSI_OVERBOUGHT_THRESHOLD", ge=60.0, le=90.0)
+    rsi_overbought: float = Field(
+        70.0, env="RSI_OVERBOUGHT_THRESHOLD", ge=60.0, le=90.0
+    )
     
     # Moving Average Parameters
     ma_short: int = Field(20, env="MA_SHORT", ge=5, le=50)
@@ -63,22 +66,32 @@ class Settings(BaseSettings):
     bb_squeeze_threshold: float = Field(0.2, env="BB_SQUEEZE_THRESHOLD", ge=0.1, le=0.5)
     
     # === Risk Management Configuration ===
-    max_alerts_per_symbol_per_day: int = Field(3, env="MAX_ALERTS_PER_SYMBOL_PER_DAY", ge=1, le=10)
-    min_alert_interval_minutes: int = Field(60, env="MIN_ALERT_INTERVAL_MINUTES", ge=5, le=1440)
+    max_alerts_per_symbol_per_day: int = Field(
+        3, env="MAX_ALERTS_PER_SYMBOL_PER_DAY", ge=1, le=10
+    )
+    min_alert_interval_minutes: int = Field(
+        60, env="MIN_ALERT_INTERVAL_MINUTES", ge=5, le=1440
+    )
     enable_position_sizing: bool = Field(True, env="ENABLE_POSITION_SIZING")
     
     # === Signal Filtering ===
     min_confidence: float = Field(0.6, env="MIN_CONFIDENCE", ge=0.0, le=1.0)
     min_consensus_strategies: int = Field(2, env="MIN_CONSENSUS_STRATEGIES", ge=2, le=5)
-    volume_threshold_multiplier: float = Field(1.2, env="VOLUME_THRESHOLD_MULTIPLIER", ge=1.0, le=3.0)
+    volume_threshold_multiplier: float = Field(
+        1.2, env="VOLUME_THRESHOLD_MULTIPLIER", ge=1.0, le=3.0
+    )
     
     # === Performance Configuration ===
     max_retries: int = Field(3, env="MAX_RETRIES", ge=1, le=10)
     retry_delay: float = Field(1.0, env="RETRY_DELAY", ge=0.1, le=10.0)
-    enable_performance_monitoring: bool = Field(True, env="ENABLE_PERFORMANCE_MONITORING")
+    enable_performance_monitoring: bool = Field(
+        True, env="ENABLE_PERFORMANCE_MONITORING"
+    )
     
     # === API Rate Limiting ===
-    yahoo_finance_rate_limit: int = Field(100, env="YAHOO_FINANCE_RATE_LIMIT", ge=10, le=1000)
+    yahoo_finance_rate_limit: int = Field(
+        100, env="YAHOO_FINANCE_RATE_LIMIT", ge=10, le=1000
+    )
     telegram_rate_limit: int = Field(30, env="TELEGRAM_RATE_LIMIT", ge=1, le=100)
     
     # === Timeout Configuration ===

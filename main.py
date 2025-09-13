@@ -10,7 +10,6 @@ import asyncio
 import logging
 import sys
 from datetime import datetime, timedelta
-from pathlib import Path
 from typing import List, Optional
 
 from config.settings import get_settings
@@ -45,8 +44,9 @@ class QuantAlertsPipeline:
     """
     Main quantitative alerts pipeline orchestrator.
     
-    Implements the complete data flow: ingestion → normalization → features → strategies → alerts
-    following the architecture defined in the copilot manifesto.
+    Implements the complete data flow: ingestion → normalization → features 
+    → strategies → alerts following the architecture defined in the copilot 
+    manifesto.
     """
     
     def __init__(self):
@@ -94,10 +94,13 @@ class QuantAlertsPipeline:
         # Use defaults if not provided
         symbols = symbols or self.settings.symbols_list
         end_date = end_date or datetime.now()
-        start_date = start_date or (end_date - timedelta(days=self.settings.lookback_days))
+        start_date = start_date or (
+            end_date - timedelta(days=self.settings.lookback_days)
+        )
         
         self.logger.info(
-            f"Starting analysis for {len(symbols)} symbols from {start_date.date()} to {end_date.date()}"
+            f"Starting analysis for {len(symbols)} symbols from "
+            f"{start_date.date()} to {end_date.date()}"
         )
         
         try:
@@ -143,13 +146,17 @@ class QuantAlertsPipeline:
         """Normalize market data for quality assurance."""
         return self.normalizer.normalize(raw_data)
     
-    async def _engineer_features(self, market_data: List[MarketData]) -> List[MarketData]:
+    async def _engineer_features(
+        self, market_data: List[MarketData]
+    ) -> List[MarketData]:
         """Engineer features from normalized market data."""
         # For now, return as-is since feature engineering is handled in strategies
         # In future versions, this will persist engineered features to Parquet
         return market_data
     
-    async def _analyze_strategies(self, market_data: List[MarketData]) -> List[TradingSignal]:
+    async def _analyze_strategies(
+        self, market_data: List[MarketData]
+    ) -> List[TradingSignal]:
         """Run strategy analysis on market data."""
         all_signals = []
         
@@ -227,7 +234,9 @@ def main():
             send_alerts=not args.no_alerts
         ))
         
-        logger.info(f"Analysis completed successfully. Generated {len(signals)} signals.")
+        logger.info(
+            f"Analysis completed successfully. Generated {len(signals)} signals."
+        )
         
     except Exception as e:
         logger.error(f"Application failed: {e}")
@@ -235,4 +244,5 @@ def main():
 
 
 if __name__ == "__main__":
+    main()
     main()

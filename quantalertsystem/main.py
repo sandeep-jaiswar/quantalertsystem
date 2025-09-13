@@ -240,7 +240,7 @@ async def main():
             )
             
             if results['success']:
-                print(f"Analysis completed successfully:")
+                print("Analysis completed successfully:")
                 print(f"  Symbols analyzed: {results['symbols_analyzed']}")
                 print(f"  Total signals: {results['total_signals']}")
                 print(f"  Consensus signals: {results['consensus_signals']}")

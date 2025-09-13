@@ -132,7 +132,7 @@ class BaseIngester(ABC):
         # Check if date range is reasonable (not more than 10 years)
         max_range = timedelta(days=365 * 10)
         if end_date - start_date > max_range:
-            raise ValueError(f"Date range cannot exceed 10 years")
+            raise ValueError("Date range cannot exceed 10 years")
     
     def validate_symbols(self, symbols: List[str]) -> None:
         """

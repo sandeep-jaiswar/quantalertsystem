@@ -23,15 +23,15 @@ class StrategyManager:
         
         # RSI Mean Reversion Strategy
         strategies['rsi_mean_reversion'] = RSIMeanReversionStrategy(
-            rsi_period=settings.rsi_period,
+            rsi_period=self.settings.rsi_period,
             oversold_threshold=30,
             overbought_threshold=70
         )
         
         # Moving Average Crossover Strategy
         strategies['ma_crossover'] = MovingAverageCrossoverStrategy(
-            short_period=settings.ma_short,
-            long_period=settings.ma_long
+            short_period=self.settings.ma_short,
+            long_period=self.settings.ma_long
         )
         
         # Bollinger Band Strategy
@@ -225,7 +225,9 @@ class StrategyManager:
             
             # Check for consensus
             if len(buy_signals) >= min_strategies:
-                avg_confidence = sum(s['confidence'] for s in buy_signals) / len(buy_signals)
+                avg_confidence = sum(
+                    s['confidence'] for s in buy_signals
+                ) / len(buy_signals)
                 avg_price = sum(s['price'] for s in buy_signals) / len(buy_signals)
                 
                 consensus_signals.append({
@@ -239,7 +241,9 @@ class StrategyManager:
                 })
             
             if len(sell_signals) >= min_strategies:
-                avg_confidence = sum(s['confidence'] for s in sell_signals) / len(sell_signals)
+                avg_confidence = sum(
+                    s['confidence'] for s in sell_signals
+                ) / len(sell_signals)
                 avg_price = sum(s['price'] for s in sell_signals) / len(sell_signals)
                 
                 consensus_signals.append({

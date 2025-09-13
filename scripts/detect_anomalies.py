@@ -395,7 +395,7 @@ def main():
         # Print critical anomalies
         critical_anomalies = [a for a in report["anomalies"] if a.get("severity") == "critical"]
         if critical_anomalies:
-            print(f"\n🔥 Critical Anomalies:")
+            print("\n🔥 Critical Anomalies:")
             for anomaly in critical_anomalies:
                 print(f"  - {anomaly.get('description', 'No description')}")
         

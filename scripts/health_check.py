@@ -256,7 +256,7 @@ def main():
         json.dump(health_report, f, indent=2, default=str)
     
     # Print summary
-    print(f"\n📊 Health Check Summary:")
+    print("\n📊 Health Check Summary:")
     print(f"Overall Status: {health_report['overall_status'].upper()}")
     print(f"Timestamp: {health_report['timestamp']}")
     

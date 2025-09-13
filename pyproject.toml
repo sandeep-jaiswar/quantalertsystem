@@ -93,6 +93,8 @@ exclude = ["tests*"]
 # Comprehensive ruff configuration for investment bank quality code
 target-version = "py38"
 line-length = 88
+
+[tool.ruff.lint]
 select = [
     # Pyflakes
     "F",
@@ -126,8 +128,6 @@ select = [
     "A",
     # flake8-commas
     "COM",
-    # flake8-copyright
-    "CPY",
     # flake8-datetime
     "DTZ",
     # flake8-debugger
@@ -212,31 +212,31 @@ unfixable = [
     "F401",
 ]
 
-[tool.ruff.per-file-ignores]
+[tool.ruff.lint.per-file-ignores]
 "__init__.py" = ["F401"]
 "tests/**/*" = ["PLR2004", "S101", "TID252", "ANN"]
 "scripts/**/*" = ["T201", "PLR2004"]
 
-[tool.ruff.flake8-annotations]
+[tool.ruff.lint.flake8-annotations]
 allow-star-arg-any = true
 
-[tool.ruff.flake8-quotes]
+[tool.ruff.lint.flake8-quotes]
 docstring-quotes = "double"
 
-[tool.ruff.flake8-tidy-imports]
+[tool.ruff.lint.flake8-tidy-imports]
 ban-relative-imports = "all"
 
-[tool.ruff.isort]
+[tool.ruff.lint.isort]
 known-first-party = ["quantalertsystem", "config", "models", "services"]
 force-single-line = true
 
-[tool.ruff.mccabe]
+[tool.ruff.lint.mccabe]
 max-complexity = 10
 
-[tool.ruff.pep8-naming]
+[tool.ruff.lint.pep8-naming]
 classmethod-decorators = ["classmethod"]
 
-[tool.ruff.pydocstyle]
+[tool.ruff.lint.pydocstyle]
 convention = "google"
 
 [tool.black]

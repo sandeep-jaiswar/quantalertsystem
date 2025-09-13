@@ -46,7 +46,11 @@ class BaseStrategy(ABC):
             
             return {
                 'strategy': self.name,
-                'symbol': data['symbol'].iloc[0] if 'symbol' in data.columns else 'Unknown',
+                'symbol': (
+                    data['symbol'].iloc[0] 
+                    if 'symbol' in data.columns 
+                    else 'Unknown'
+                ),
                 'latest_signal': latest_signal,
                 'data': data_with_signals,
                 'success': True
@@ -56,7 +60,11 @@ class BaseStrategy(ABC):
             self.logger.error(f"Error in {self.name} strategy analysis: {str(e)}")
             return {
                 'strategy': self.name,
-                'symbol': data['symbol'].iloc[0] if 'symbol' in data.columns else 'Unknown',
+                'symbol': (
+                    data['symbol'].iloc[0] 
+                    if 'symbol' in data.columns 
+                    else 'Unknown'
+                ),
                 'latest_signal': None,
                 'data': None,
                 'success': False,

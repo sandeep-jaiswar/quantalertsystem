@@ -327,7 +327,7 @@ def main():
                 f.write(md_content)
         
         # Print summary
-        print(f"✅ Analysis summary generated successfully")
+        print("✅ Analysis summary generated successfully")
         print(f"📄 Output saved to: {output_path}")
         print(f"📈 Overall Status: {summary.get('overall_status', 'unknown').upper()}")
         
