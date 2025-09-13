@@ -123,7 +123,7 @@ class QuantAlertSystem:
                 'timestamp': datetime.now(),
                 'symbols_analyzed': len(market_data),
                 'total_signals': len(actionable_signals),
-                'consensus_signals': len(consensus_signals),
+                'consensus_count': len(consensus_signals),
                 'alerts_sent': alerts_sent,
                 'actionable_signals': actionable_signals,
                 'consensus_signals': consensus_signals,

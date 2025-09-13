@@ -1,7 +1,7 @@
 """Integration tests for the quantitative pipeline."""
 
 import pytest
-from unittest.mock import Mock, patch
+from unittest.mock import patch
 from quantalertsystem.main import QuantAlertsPipeline
 
 

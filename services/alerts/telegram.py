@@ -1,7 +1,8 @@
 """Telegram bot for sending trading alerts."""
 
 import asyncio
-from typing import List, Dict, Any, Optional
+import logging
+from typing import List, Dict, Any
 from telegram import Bot
 from telegram.constants import ParseMode
 from config.settings import get_settings
@@ -231,9 +232,9 @@ class TelegramAlertsBot:
             return False
 
 
-# Convenience function for sending alerts without async context
 def send_alert_sync(message: str) -> bool:
     """Send a Telegram alert synchronously."""
+    logger = logging.getLogger(__name__)
     bot = TelegramAlertsBot()
     
     try:
