@@ -1,0 +1,102 @@
+name: Quantitative Analysis & Alerts
+
+on:
+  schedule:
+    # Run at market open (9:30 AM EST) on weekdays
+    - cron: '30 14 * * 1-5'  # 14:30 UTC = 9:30 AM EST
+    # Run at market close (4:00 PM EST) on weekdays  
+    - cron: '21 0 * * 2-6'   # 21:00 UTC = 4:00 PM EST
+    # Run at midday (12:00 PM EST) on weekdays
+    - cron: '17 0 * * 1-5'   # 17:00 UTC = 12:00 PM EST
+  
+  workflow_dispatch:  # Allow manual triggering
+    inputs:
+      symbols:
+        description: 'Stock symbols to analyze (comma-separated)'
+        required: false
+        default: 'AAPL,GOOGL,MSFT,TSLA,NVDA'
+      min_confidence:
+        description: 'Minimum confidence threshold'
+        required: false
+        default: '0.6'
+
+env:
+  PYTHONPATH: ${{ github.workspace }}
+
+jobs:
+  analyze:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+    
+    - name: Cache pip dependencies
+      uses: actions/cache@v3
+      with:
+        path: ~/.cache/pip
+        key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-pip-
+    
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+    
+    - name: Create data directory
+      run: mkdir -p data logs
+    
+    - name: Run system test
+      env:
+        TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+        TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+      run: |
+        python -m quantalertsystem.main --test
+    
+    - name: Run quantitative analysis
+      env:
+        TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+        TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        DATABASE_PATH: ./data/quant_alerts.db
+        LOG_LEVEL: INFO
+      run: |
+        if [ -n "${{ github.event.inputs.symbols }}" ]; then
+          # Manual trigger with custom symbols
+          IFS=',' read -ra SYMBOLS <<< "${{ github.event.inputs.symbols }}"
+          python -m quantalertsystem.main \
+            --symbols "${SYMBOLS[@]}" \
+            --min-confidence "${{ github.event.inputs.min_confidence }}"
+        else
+          # Scheduled run with default symbols
+          python -m quantalertsystem.main --min-confidence 0.6
+        fi
+    
+    - name: Upload analysis artifacts
+      uses: actions/upload-artifact@v3
+      if: always()
+      with:
+        name: analysis-results-${{ github.run_number }}
+        path: |
+          logs/
+          data/
+        retention-days: 30
+    
+    - name: Clean up old data
+      if: success()
+      env:
+        TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+        TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+      run: |
+        python -c "
+        from quantalertsystem.data.storage import DataStorage
+        storage = DataStorage()
+        storage.cleanup_old_data(days_to_keep=180)
+        storage.close()
+        print('Database cleanup completed')
+        "
