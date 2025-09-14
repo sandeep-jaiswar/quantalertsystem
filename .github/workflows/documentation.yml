@@ -65,7 +65,7 @@ jobs:
           --output README_GENERATED.md
 
     - name: Upload documentation artifacts
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: documentation-${{ github.run_number }}
         path: |
@@ -274,7 +274,7 @@ jobs:
         jupyter nbconvert --to notebook --execute docs/examples/*.ipynb
 
     - name: Upload example artifacts
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: code-examples-${{ github.run_number }}
         path: |
@@ -322,7 +322,7 @@ jobs:
           --output docs/strategies/
 
     - name: Upload API documentation
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: api-documentation-${{ github.run_number }}
         path: docs/api/
@@ -339,12 +339,12 @@ jobs:
       uses: actions/checkout@v4
 
     - name: Download documentation artifacts
-      uses: actions/download-artifact@v3
+      uses: actions/download-artifact@v4
       with:
         name: documentation-${{ github.run_number }}
 
     - name: Setup Node.js for deployment
-      uses: actions/setup-node@v3
+      uses: actions/setup-node@v4
       with:
         node-version: '18'
 

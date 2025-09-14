@@ -117,7 +117,7 @@ jobs:
         python scripts/health_check.py --output logs/health-check.json
 
     - name: Upload pre-flight reports
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       if: always()
       with:
         name: pre-flight-reports-${{ github.run_number }}
@@ -304,7 +304,7 @@ jobs:
         " || echo "Database check failed"
 
     - name: Upload analysis artifacts
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       if: always()
       with:
         name: analysis-results-${{ github.run_number }}
@@ -341,7 +341,7 @@ jobs:
         pip install requests pandas matplotlib
 
     - name: Download analysis artifacts
-      uses: actions/download-artifact@v3
+      uses: actions/download-artifact@v4
       with:
         name: analysis-results-${{ github.run_number }}
 
@@ -364,7 +364,7 @@ jobs:
           --output reports/anomalies.json || echo "Anomaly detection failed"
 
     - name: Upload final reports
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: final-analysis-reports-${{ github.run_number }}
         path: reports/

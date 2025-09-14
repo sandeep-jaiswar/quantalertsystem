@@ -83,7 +83,7 @@ jobs:
           --output reports/performance/performance-summary.html
 
     - name: Upload performance reports
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: performance-analysis-${{ github.run_number }}
         path: reports/performance/
@@ -137,7 +137,7 @@ jobs:
         python scripts/check_memory_leaks.py --output reports/monitoring/memory-leaks.json
 
     - name: Upload monitoring reports
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: resource-monitoring-${{ github.run_number }}
         path: reports/monitoring/
@@ -165,13 +165,13 @@ jobs:
         pip install -e .
 
     - name: Download performance artifacts
-      uses: actions/download-artifact@v3
+      uses: actions/download-artifact@v4
       with:
         name: performance-analysis-${{ github.run_number }}
         path: reports/performance/
 
     - name: Download monitoring artifacts
-      uses: actions/download-artifact@v3
+      uses: actions/download-artifact@v4
       with:
         name: resource-monitoring-${{ github.run_number }}
         path: reports/monitoring/
@@ -220,7 +220,7 @@ jobs:
         pip install matplotlib seaborn
 
     - name: Download current benchmarks
-      uses: actions/download-artifact@v3
+      uses: actions/download-artifact@v4
       with:
         name: performance-analysis-${{ github.run_number }}
         path: reports/current/
@@ -249,7 +249,7 @@ jobs:
           --output reports/performance-dashboard.html
 
     - name: Upload comparison reports
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: performance-comparison-${{ github.run_number }}
         path: |
@@ -305,7 +305,7 @@ jobs:
           --output reports/load-test/db-load.json
 
     - name: Upload load test results
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: load-test-results-${{ github.run_number }}
         path: reports/load-test/

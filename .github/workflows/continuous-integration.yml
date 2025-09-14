@@ -69,7 +69,7 @@ jobs:
         name: codecov-${{ matrix.os }}-${{ matrix.python-version }}
 
     - name: Upload test results
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       if: always()
       with:
         name: test-results-${{ matrix.os }}-${{ matrix.python-version }}
@@ -152,7 +152,7 @@ jobs:
         pytest tests/performance/ -v --benchmark-only --benchmark-json=benchmark.json
 
     - name: Upload benchmark results
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: benchmark-results-${{ github.run_number }}
         path: benchmark.json
@@ -198,7 +198,7 @@ jobs:
         GITHUB_TOKEN: ${{ github.token }}
 
     - name: Upload coverage artifacts
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: coverage-report-${{ github.run_number }}
         path: |
