@@ -1,0 +1,312 @@
+name: Performance Monitoring & Optimization
+
+on:
+  schedule:
+    # Run performance analysis daily after market close
+    - cron: '0 22 * * 1-5'  # 10 PM UTC on weekdays
+  workflow_dispatch:
+    inputs:
+      symbols:
+        description: 'Stock symbols for performance testing'
+        required: false
+        default: 'AAPL,GOOGL,MSFT'
+      benchmark_mode:
+        description: 'Benchmark mode (full/quick)'
+        required: false
+        default: 'quick'
+        type: choice
+        options:
+          - quick
+          - full
+
+env:
+  PYTHONPATH: ${{ github.workspace }}
+
+jobs:
+  strategy-performance:
+    name: Strategy Performance Analysis
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Python 3.11
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+        cache: 'pip'
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install -e .
+        pip install pytest-benchmark memory-profiler line-profiler psutil
+
+    - name: Create performance directories
+      run: |
+        mkdir -p logs data reports/performance
+
+    - name: Run strategy performance benchmarks
+      env:
+        TELEGRAM_BOT_TOKEN: "perf_test_token"
+        TELEGRAM_CHAT_ID: "perf_test_chat"
+        DATABASE_PATH: "./data/perf_test.db"
+        SYMBOLS: ${{ github.event.inputs.symbols || 'AAPL,GOOGL,MSFT' }}
+        BENCHMARK_MODE: ${{ github.event.inputs.benchmark_mode || 'quick' }}
+      run: |
+        python -m pytest tests/performance/test_strategy_performance.py \
+          --benchmark-only \
+          --benchmark-json=reports/performance/strategy-benchmark.json \
+          --benchmark-sort=mean \
+          -v
+
+    - name: Memory profiling
+      env:
+        TELEGRAM_BOT_TOKEN: "perf_test_token"
+        TELEGRAM_CHAT_ID: "perf_test_chat"
+      run: |
+        python -m memory_profiler scripts/profile_memory_usage.py > reports/performance/memory-profile.txt
+
+    - name: Data processing performance
+      env:
+        TELEGRAM_BOT_TOKEN: "perf_test_token"
+        TELEGRAM_CHAT_ID: "perf_test_chat"
+      run: |
+        python scripts/benchmark_data_processing.py --output reports/performance/data-benchmark.json
+
+    - name: Generate performance report
+      run: |
+        python scripts/generate_performance_report.py \
+          --input reports/performance/ \
+          --output reports/performance/performance-summary.html
+
+    - name: Upload performance reports
+      uses: actions/upload-artifact@v4
+      with:
+        name: performance-analysis-${{ github.run_number }}
+        path: reports/performance/
+        retention-days: 90
+
+  resource-monitoring:
+    name: Resource Usage Monitoring
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Python 3.11
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+        cache: 'pip'
+
+    - name: Install monitoring tools
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install -e .
+        pip install psutil py-spy
+
+    - name: Monitor resource usage during analysis
+      env:
+        TELEGRAM_BOT_TOKEN: "monitor_test_token"
+        TELEGRAM_CHAT_ID: "monitor_test_chat"
+      run: |
+        mkdir -p reports/monitoring
+        
+        # Start resource monitoring in background
+        python scripts/monitor_resources.py --duration 300 --output reports/monitoring/resource-usage.json &
+        MONITOR_PID=$!
+        
+        # Run analysis pipeline
+        python -m quantalertsystem.main --symbols AAPL,GOOGL --min-confidence 0.6 || true
+        
+        # Stop monitoring
+        kill $MONITOR_PID 2>/dev/null || true
+        wait $MONITOR_PID 2>/dev/null || true
+
+    - name: Analyze database performance
+      run: |
+        python scripts/analyze_db_performance.py --output reports/monitoring/db-performance.json
+
+    - name: Check memory leaks
+      run: |
+        python scripts/check_memory_leaks.py --output reports/monitoring/memory-leaks.json
+
+    - name: Upload monitoring reports
+      uses: actions/upload-artifact@v4
+      with:
+        name: resource-monitoring-${{ github.run_number }}
+        path: reports/monitoring/
+        retention-days: 30
+
+  optimization-recommendations:
+    name: Performance Optimization Analysis
+    runs-on: ubuntu-latest
+    needs: [strategy-performance, resource-monitoring]
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Python 3.11
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+        cache: 'pip'
+
+    - name: Install analysis tools
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install -e .
+
+    - name: Download performance artifacts
+      uses: actions/download-artifact@v4
+      with:
+        name: performance-analysis-${{ github.run_number }}
+        path: reports/performance/
+
+    - name: Download monitoring artifacts
+      uses: actions/download-artifact@v4
+      with:
+        name: resource-monitoring-${{ github.run_number }}
+        path: reports/monitoring/
+
+    - name: Generate optimization recommendations
+      run: |
+        python scripts/generate_optimization_recommendations.py \
+          --performance-data reports/performance/ \
+          --monitoring-data reports/monitoring/ \
+          --output reports/optimization-recommendations.md
+
+    - name: Create optimization issue
+      if: github.ref == 'refs/heads/main'
+      uses: peter-evans/create-pull-request@v5
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        commit-message: 'perf: add performance optimization recommendations'
+        title: '⚡ Performance Optimization Recommendations'
+        body-path: reports/optimization-recommendations.md
+        branch: perf/optimization-recommendations
+        delete-branch: true
+        labels: |
+          performance
+          optimization
+          analysis
+
+  benchmark-comparison:
+    name: Historical Benchmark Comparison
+    runs-on: ubuntu-latest
+    needs: [strategy-performance]
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Python 3.11
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+        cache: 'pip'
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install matplotlib seaborn
+
+    - name: Download current benchmarks
+      uses: actions/download-artifact@v4
+      with:
+        name: performance-analysis-${{ github.run_number }}
+        path: reports/current/
+
+    - name: Download historical benchmarks
+      continue-on-error: true
+      uses: dawidd6/action-download-artifact@v2
+      with:
+        workflow: performance-monitoring.yml
+        name_is_regexp: true
+        name: performance-analysis-.*
+        path: reports/historical/
+        if_no_artifact_found: ignore
+
+    - name: Compare performance trends
+      run: |
+        python scripts/compare_performance_trends.py \
+          --current reports/current/ \
+          --historical reports/historical/ \
+          --output reports/performance-trends.html
+
+    - name: Generate performance dashboard
+      run: |
+        python scripts/generate_performance_dashboard.py \
+          --data reports/ \
+          --output reports/performance-dashboard.html
+
+    - name: Upload comparison reports
+      uses: actions/upload-artifact@v4
+      with:
+        name: performance-comparison-${{ github.run_number }}
+        path: |
+          reports/performance-trends.html
+          reports/performance-dashboard.html
+        retention-days: 90
+
+  load-testing:
+    name: Load Testing & Stress Analysis
+    runs-on: ubuntu-latest
+    if: github.event.inputs.benchmark_mode == 'full'
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Python 3.11
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+        cache: 'pip'
+
+    - name: Install load testing tools
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install -e .
+        pip install locust
+
+    - name: Run concurrent analysis load test
+      env:
+        TELEGRAM_BOT_TOKEN: "load_test_token"
+        TELEGRAM_CHAT_ID: "load_test_chat"
+      run: |
+        mkdir -p reports/load-test
+        python scripts/load_test_analysis.py \
+          --concurrent-users 10 \
+          --duration 300 \
+          --output reports/load-test/concurrent-analysis.json
+
+    - name: Test memory under high load
+      run: |
+        python scripts/stress_test_memory.py \
+          --symbols 50 \
+          --iterations 100 \
+          --output reports/load-test/memory-stress.json
+
+    - name: Test database under load
+      run: |
+        python scripts/load_test_database.py \
+          --concurrent-connections 20 \
+          --operations 1000 \
+          --output reports/load-test/db-load.json
+
+    - name: Upload load test results
+      uses: actions/upload-artifact@v4
+      with:
+        name: load-test-results-${{ github.run_number }}
+        path: reports/load-test/
+        retention-days: 30
