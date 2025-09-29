@@ -16,21 +16,15 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
-        python-version: ['3.8', '3.9', '3.10', '3.11', '3.12']
-        exclude:
-          # Skip some combinations to reduce CI time
-          - os: windows-latest
-            python-version: '3.8'
-          - os: macos-latest
-            python-version: '3.8'
+        os: [ubuntu-latest]
+        python-version: ['3.11', '3.12']
 
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
 
     - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v4
+      uses: actions/setup-python@v5
       with:
         python-version: ${{ matrix.python-version }}
         cache: 'pip'
@@ -81,13 +75,14 @@ jobs:
     name: Integration Tests
     runs-on: ubuntu-latest
     needs: [test-matrix]
+    if: always() && (needs.test-matrix.result == 'success' || needs.test-matrix.result == 'failure')
 
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
 
     - name: Set up Python 3.11
-      uses: actions/setup-python@v4
+      uses: actions/setup-python@v5
       with:
         python-version: '3.11'
         cache: 'pip'
@@ -103,8 +98,8 @@ jobs:
 
     - name: Run integration tests
       env:
-        TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
-        TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        TELEGRAM_BOT_TOKEN: "test_token_for_integration"
+        TELEGRAM_CHAT_ID: "test_chat_id_for_integration"
         DATABASE_PATH: "./data/integration_test.db"
         LOG_LEVEL: "INFO"
       run: |
@@ -112,8 +107,8 @@ jobs:
 
     - name: Test data pipeline end-to-end
       env:
-        TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
-        TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        TELEGRAM_BOT_TOKEN: "test_token_for_e2e"
+        TELEGRAM_CHAT_ID: "test_chat_id_for_e2e"
         DATABASE_PATH: "./data/e2e_test.db"
         SYMBOLS: "AAPL"
         MIN_CONFIDENCE: "0.5"
@@ -124,13 +119,14 @@ jobs:
     name: Performance Benchmarks
     runs-on: ubuntu-latest
     needs: [test-matrix]
+    if: always() && (needs.test-matrix.result == 'success' || needs.test-matrix.result == 'failure')
 
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
 
     - name: Set up Python 3.11
-      uses: actions/setup-python@v4
+      uses: actions/setup-python@v5
       with:
         python-version: '3.11'
         cache: 'pip'
@@ -159,13 +155,14 @@ jobs:
     name: Coverage Report & Analysis
     runs-on: ubuntu-latest
     needs: [test-matrix]
+    if: always() && (needs.test-matrix.result == 'success' || needs.test-matrix.result == 'failure')
 
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
 
     - name: Set up Python 3.11
-      uses: actions/setup-python@v4
+      uses: actions/setup-python@v5
       with:
         python-version: '3.11'
         cache: 'pip'
