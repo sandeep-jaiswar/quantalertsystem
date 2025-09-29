@@ -35,7 +35,6 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install -r requirements.txt
-        pip install -e .
         pip install sphinx sphinx-rtd-theme sphinx-autodoc-typehints myst-parser
         pip install pydoc-markdown mkdocs mkdocs-material
 
@@ -99,7 +98,6 @@ jobs:
     - name: Install quality check tools
       run: |
         pip install -r requirements.txt
-        pip install -e .
         pip install doc8 pydocstyle interrogate
 
     - name: Check documentation style
@@ -199,7 +197,6 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install -r requirements.txt
-        pip install -e .
         pip install build twine
 
     - name: Extract version from tag
@@ -254,7 +251,6 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install -r requirements.txt
-        pip install -e .
 
     - name: Extract and test code examples from docs
       run: |
@@ -300,7 +296,6 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install -r requirements.txt
-        pip install -e .
         pip install pdoc3 sphinx-autoapi
 
     - name: Generate API documentation

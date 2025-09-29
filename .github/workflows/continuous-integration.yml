@@ -96,7 +96,6 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install -r requirements.txt
-        pip install -e .
 
     - name: Create test environment
       run: |
@@ -109,7 +108,7 @@ jobs:
         DATABASE_PATH: "./data/integration_test.db"
         LOG_LEVEL: "INFO"
       run: |
-        pytest tests/integration/ -v --tb=short -m "integration"
+        PYTHONPATH=${{ github.workspace }} pytest tests/integration/ -v --tb=short -m "integration"
 
     - name: Test data pipeline end-to-end
       env:
@@ -119,7 +118,7 @@ jobs:
         SYMBOLS: "AAPL"
         MIN_CONFIDENCE: "0.5"
       run: |
-        python main.py --test --symbols AAPL --min-confidence 0.5 || echo "E2E test completed with issues"
+        PYTHONPATH=${{ github.workspace }} python main.py --test --symbols AAPL --min-confidence 0.5 || echo "E2E test completed with issues"
 
   performance-tests:
     name: Performance Benchmarks
@@ -140,7 +139,6 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install -r requirements.txt
-        pip install -e .
         pip install pytest-benchmark memory-profiler
 
     - name: Run performance benchmarks
@@ -148,7 +146,7 @@ jobs:
         TELEGRAM_BOT_TOKEN: "test_token"
         TELEGRAM_CHAT_ID: "test_chat_id"
       run: |
-        pytest tests/performance/ -v --benchmark-only --benchmark-json=benchmark.json
+        PYTHONPATH=${{ github.workspace }} pytest tests/performance/ -v --benchmark-only --benchmark-json=benchmark.json
 
     - name: Upload benchmark results
       uses: actions/upload-artifact@v4
@@ -176,7 +174,6 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install -r requirements.txt
-        pip install -e .
         pip install coverage[toml] coverage-badge
 
     - name: Run comprehensive coverage
@@ -184,7 +181,7 @@ jobs:
         TELEGRAM_BOT_TOKEN: "test_token"
         TELEGRAM_CHAT_ID: "test_chat_id"
       run: |
-        coverage run -m pytest tests/
+        PYTHONPATH=${{ github.workspace }} coverage run -m pytest tests/
         coverage report --precision=2
         coverage html
         coverage xml
