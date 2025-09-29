@@ -6,13 +6,13 @@ encapsulation, validation, and composability.
 """
 
 from .base import BaseStrategy
-from .technical import RSIMeanReversionStrategy, MovingAverageCrossoverStrategy, BollingerBandSqueezeStrategy
+from .technical import RSIMeanReversionStrategy, MovingAverageCrossoverStrategy, BollingerBandStrategy
 from .manager import StrategyManager
 
 __all__ = [
     "BaseStrategy",
     "RSIMeanReversionStrategy", 
     "MovingAverageCrossoverStrategy",
-    "BollingerBandSqueezeStrategy",
+    "BollingerBandStrategy",
     "StrategyManager"
 ]

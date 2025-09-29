@@ -11,7 +11,7 @@ __author__ = "Quant Alerts Team"
 __description__ = "Zero-cost quantitative alerting system with investment bank quality"
 
 # Core system imports
-from .config import get_settings
-from .main import QuantAlertsPipeline
+from config.settings import get_settings
+from main import QuantAlertsPipeline
 
 __all__ = ["get_settings", "QuantAlertsPipeline"]

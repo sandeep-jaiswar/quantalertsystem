@@ -64,10 +64,7 @@ class QuantAlertsPipeline:
         self.strategy_manager = StrategyManager()
         
         # Initialize alert system
-        telegram_notifier = TelegramNotifier(
-            bot_token=self.settings.telegram_bot_token,
-            chat_id=self.settings.telegram_chat_id
-        )
+        telegram_notifier = TelegramNotifier()
         self.alert_manager = AlertManager(telegram_notifier)
         
         self.logger = logging.getLogger(__name__)
@@ -244,5 +241,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
     main()

@@ -15,7 +15,13 @@ class StrategyManager:
     
     def __init__(self):
         self.settings = get_settings()
+        self.logger = self._get_logger()
         self.strategies = self._initialize_strategies()
+    
+    def _get_logger(self):
+        """Get logger instance."""
+        import logging
+        return logging.getLogger(__name__)
     
     def _initialize_strategies(self) -> Dict[str, Any]:
         """Initialize all available strategies."""

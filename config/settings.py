@@ -26,8 +26,8 @@ class Settings(BaseSettings):
     """
     
     # === Alert Configuration ===
-    telegram_bot_token: str = Field(..., env="TELEGRAM_BOT_TOKEN")
-    telegram_chat_id: str = Field(..., env="TELEGRAM_CHAT_ID")
+    telegram_bot_token: str = Field("test_token", env="TELEGRAM_BOT_TOKEN")
+    telegram_chat_id: str = Field("test_chat_id", env="TELEGRAM_CHAT_ID")
     
     # === Data Storage Configuration ===
     data_dir: Path = Field(Path("./data"), env="DATA_DIR")

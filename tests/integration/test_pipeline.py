@@ -2,7 +2,7 @@
 
 import pytest
 from unittest.mock import patch
-from quantalertsystem.main import QuantAlertsPipeline
+from main import QuantAlertsPipeline
 
 
 @pytest.mark.integration
