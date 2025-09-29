@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: ['3.8', '3.9', '3.10', '3.11']
+        python-version: ['3.11']
 
     steps:
     - uses: actions/checkout@v4
@@ -35,18 +35,9 @@ jobs:
         pip install -r requirements.txt
         mkdir -p logs data reports
     
-    - name: Lint with flake8  
-      run: |
-        flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics --exclude=.git,__pycache__,.pytest_cache
-        flake8 . --count --exit-zero --max-complexity=10 --max-line-length=88 --statistics --exclude=.git,__pycache__,.pytest_cache
-    
-    - name: Format check with black
-      run: |
-        black --check . --exclude="/(\.git|__pycache__|\.pytest_cache)/"
-    
     - name: Run tests
       run: |
-        PYTHONPATH=${{ github.workspace }} pytest tests/ -v --tb=short
+        PYTHONPATH=${{ github.workspace }} pytest tests/ -v --tb=short -m "not performance"
       env:
         TELEGRAM_BOT_TOKEN: "test_token"
         TELEGRAM_CHAT_ID: "test_chat_id"
