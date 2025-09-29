@@ -16,6 +16,7 @@ class TelegramAlertsBot:
         self.bot_token = self.settings.telegram_bot_token
         self.chat_id = self.settings.telegram_chat_id
         self.bot = None
+        self.logger = logging.getLogger(__name__)
         
         if self.bot_token and self.bot_token != "your_bot_token_here":
             self.bot = Bot(token=self.bot_token)

@@ -3,7 +3,7 @@
 import pytest
 import pandas as pd
 import numpy as np
-from quantalertsystem.strategies.technical import (
+from services.strategy.technical import (
     RSIMeanReversionStrategy,
     MovingAverageCrossoverStrategy,
     BollingerBandStrategy

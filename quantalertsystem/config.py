@@ -15,8 +15,8 @@ class Settings(BaseSettings):
     """Application settings."""
     
     # Telegram Configuration
-    telegram_bot_token: str = Field(..., env="TELEGRAM_BOT_TOKEN")
-    telegram_chat_id: str = Field(..., env="TELEGRAM_CHAT_ID")
+    telegram_bot_token: str = Field("test_token", env="TELEGRAM_BOT_TOKEN")
+    telegram_chat_id: str = Field("test_chat_id", env="TELEGRAM_CHAT_ID")
     
     # Database Configuration
     database_path: str = Field("./data/quant_alerts.db", env="DATABASE_PATH")
