@@ -33,20 +33,20 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install -r requirements.txt
-        pip install -e .
+        mkdir -p logs data reports
     
-    - name: Lint with flake8
+    - name: Lint with flake8  
       run: |
-        flake8 quantalertsystem --count --select=E9,F63,F7,F82 --show-source --statistics
-        flake8 quantalertsystem --count --exit-zero --max-complexity=10 --max-line-length=88 --statistics
+        flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics --exclude=.git,__pycache__,.pytest_cache
+        flake8 . --count --exit-zero --max-complexity=10 --max-line-length=88 --statistics --exclude=.git,__pycache__,.pytest_cache
     
     - name: Format check with black
       run: |
-        black --check quantalertsystem
+        black --check . --exclude="/(\.git|__pycache__|\.pytest_cache)/"
     
     - name: Run tests
       run: |
-        pytest tests/ -v --tb=short
+        PYTHONPATH=${{ github.workspace }} pytest tests/ -v --tb=short
       env:
         TELEGRAM_BOT_TOKEN: "test_token"
         TELEGRAM_CHAT_ID: "test_chat_id"
